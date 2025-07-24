@@ -1,4 +1,7 @@
+
 # Required Library for the Project
+import webbrowser   #For user feedback
+import threading # Main GUI getting Freeze to remove that problem
 #Module for GUI
 from customtkinter import *
 from tkinter import messagebox as msg
@@ -65,9 +68,17 @@ class AppResult:
         self.Label(Frame1,"NOTE: FIRST ROW IS TREATED AS HEADERS REGISTRATION\n NO. MUST BE IN COLUMN A & ROLL NO. IN COLUMN B",0.5,0.8,font=("calibri",12,"normal"),text_color='#EF4444')
         self.Label(Frame1,"NOTE: IF AN ERROR OCCURS, RESELECT THE SAME OUTPUT\n FILE ",0.5,0.9,font=("calibri",12,"normal"),text_color='#EF4444')
 
-
+        self.Label(self.app,"Please provide your valueable feedback",0.13,0.85,font=("Roboto",12,"normal"))
+        self.feedbacklbl = self.Label(self.app,"Click Here",0.1,0.9,font=("Roboto",12,"normal"))
+        self.feedbacklbl.bind("<Button-1>",lambda event: self.feedback())
+        self.feedbacklbl.bind("<Enter>",lambda event: self.feedbacklbl.configure(font=("Roboto",14,"underline"),cursor="hand2"))
+        self.feedbacklbl.bind("<Leave>",lambda event: self.feedbacklbl.configure(font=("Roboto",12,"normal"),cursor="arrow"))
 
         self.app.mainloop()
+
+    # For User Feedback
+    def feedback(self):
+        webbrowser.open('https://forms.gle/PoXZRNdXS1P14MsaA')
     
     # Create Lable
     def Label(self,master,text:str,x:float,y:float,font = ("Roboto",18,"normal"),text_color=None):
@@ -113,14 +124,14 @@ class AppResult:
             self.progress_status = 0.0
             self.percentage_status = self.progress_status*100
 
-            self.progressbar = CTkProgressBar(self.app,300,height=18,corner_radius=6,border_color="blue",progress_color="#34D399",orientation="horizontal")
+            self.progressbar = CTkProgressBar(self.app,250,height=18,corner_radius=6,border_color="blue",progress_color="#34D399",orientation="horizontal")
             self.progressbar.place(relx=0.42,rely=0.5,anchor=CENTER)
             self.progressbar.set(self.progress_status) 
             self.percentage_label = self.Label(self.app,f"{self.percentage_status}%",0.6,0.5)
 
             self.est_time_lable = self.Label(self.app,f"Estimate Time: {self.estimate_time} Minutes",0.43,0.55)
 
-            self.start_btn = self.Button(self.app,"Start",0.41,0.65,command=self.LetsDoIt)
+            self.start_btn = self.Button(self.app,"Start",0.41,0.65,command = lambda: threading.Thread(target=self.LetsDoIt).start())
 
         else:
             if self.input_file.get():
