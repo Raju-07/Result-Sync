@@ -17,6 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 
 import os
 from PIL import Image,ImageTk
@@ -278,8 +279,11 @@ class AppResult:
                         #random_data = driver.find_element(By.XPATH("//table//tr[2]//td[8]"))#just for example a simple way for extracting random data
                             bca201, bca202, bca203, bca204, bca205 = subject_marks
                             
-                            #Result
-                            total_marks = driver.find_element(By.ID,"rptMarks_ctl06_lblTotal").text
+                            #Result    Applying logic for getting Reappear students result too
+                            try:
+                                total_marks = driver.find_element(By.ID,"rptMarks_ctl06_lblTotal").text
+                            except NoSuchElementException:
+                                total_marks = driver.find_element(By.ID,"rptMarks_ctl07_lblTotal").text
                             result = driver.find_element(By.ID,"lblresult").text
                     
                     # Storing data in Excel for each row
