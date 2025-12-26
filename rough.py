@@ -22,8 +22,5 @@ label.bind("<Enter>", lambda event: label.configure(font=("Arial", 14, "underlin
 label.bind("<Leave>", lambda event: label.configure(font=("Arial", 12), cursor="arrow"))
 
 app.mainloop()
-
-
-
 app.mainloop()
 
