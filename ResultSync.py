@@ -14,7 +14,9 @@ from openpyxl.styles import PatternFill,Font,Alignment
 #Automate the task using selenium"
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.options import Options
+from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chromium.options import Options
+# from selenium.webdriver.edge.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
@@ -236,7 +238,7 @@ class AppResult:
         # Set up the WebDriver (Edge in this example)
         options = Options()
         options.add_experimental_option('excludeSwitches',['enable-logging'])  # Suppress DevTools message
-        driver = webdriver.Edge(options=options)
+        driver = webdriver.Chrome(options=options)
         wait = WebDriverWait(driver,10)
         # Navigate to the result portal
         driver.get("https://result.mdu.ac.in/postexam/result.aspx")
@@ -324,7 +326,17 @@ class AppResult:
                 track_update.write(str(self.current_row))
             # Display info when process complete
             msg.showinfo("Success","All the data fatched successfully")
+            if msg.askyesno("Clear Cache", "Process completed successfully. Clear cache files?"):
+                cache_files = ['Processed_entries.txt','row_status.txt']
+                try:
+                    for files in cache_files:
+                        if os.path.exists(files):
+                            os.remove(files)
+                    msg.showinfo("Success","Cache files has been sucessfully deleted")
+                except Exception as e:
+                    msg.showerror("Process Interupted","Cache files deleting failed")
             # Close the browser
             driver.quit()
+
 
 app = AppResult()

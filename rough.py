@@ -1,26 +1,41 @@
-import webbrowser
 from customtkinter import *
+from tkinter import messagebox as msg
+import os
+
+def createfiles():
+    new_files = ["Processed_entries.txt","row_status.txt"]
+    try:
+        for files in new_files:
+            if not os.path.exists(files):
+                with open(files,'w') as file:
+                    file.close()
+        msg.showinfo("All the files are created")
+    except Exception as e:
+        msg.showerror("Error occur during file creation")
+        print(f"Reason is {e}")
+
+def showmessage():
+    cache_file = ["Processed_entries.txt","row_status.txt"]
+    try:
+        if msg.askyesno("Cache Deletion Confirmation", "Would you like to proceed with deleting the file?"):
+            for files in cache_file:
+                if os.path.exists(files):
+                    os.remove(files)
+            msg.showinfo("All the files has been sucessfully deleted..")
+        else:
+            print("File deletion was not executed.")
+    except Exception as e:
+        print("The cache deletion process was interrupted.")
+        print(f"Error: {e}")
 
 app = CTk()
-app.geometry("444x444")
-app.title("Improvement ")
+app.geometry("444x555")
+app.title("Hello")
 
-def on_click():
-   webbrowser.open("https://forms.gle/PoXZRNdXS1P14MsaA")
-
-label = CTkLabel(app,text="Help me to make this program more efficient")
-label.pack()
-labelhelp = CTkLabel(app,text="Click here")
-labelhelp.pack()
-labelhelp.bind("Button-1",lambda event: on_click())
-
-# Bind left mouse click to the label
-label.bind("<Button-1>", lambda event: on_click())
-
-# Optional: Change appearance on hover
-label.bind("<Enter>", lambda event: label.configure(font=("Arial", 14, "underline"), cursor="hand2"))
-label.bind("<Leave>", lambda event: label.configure(font=("Arial", 12), cursor="arrow"))
+# button
+button1 = CTkButton(master=app, width=120, height=45, corner_radius=5, text="Delete files", bg_color="green", command=showmessage)
+button1.pack(pady=20)  # Use pack to place the button with padding
+button2 = CTkButton(master=app, width=120, height=45, corner_radius=5, text="Create files", bg_color="green", command=createfiles)
+button2.pack(pady=20)  # Use pack to place the button with padding
 
 app.mainloop()
-app.mainloop()
-
