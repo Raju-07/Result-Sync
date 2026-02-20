@@ -327,8 +327,4 @@ class AppResult:
             # Close the browser
             driver.quit()
 
-
-
-
-
 app = AppResult()
