@@ -28,6 +28,7 @@ from selenium.common.exceptions import NoSuchElementException
 import os
 import sys
 from PIL import Image,ImageTk
+import multiprocessing
 
 
 class AppResult:
@@ -147,7 +148,7 @@ class AppResult:
 
             self.est_time_lable = self.Label(self.app,f"Estimate Time: {self.estimate_time} Minutes",0.43,0.55)
 
-            self.start_btn = self.Button(self.app,"Start",0.41,0.65,command = lambda: threading.Thread(target=self.LetsDoIt).start())
+            self.start_btn = self.Button(self.app,"Start",0.41,0.65,command = lambda: threading.Thread(target=self.LetsDoIt,daemon=True).start())
 
         else:
             if self.input_file.get():
@@ -192,6 +193,7 @@ class AppResult:
 
 
     def LetsDoIt(self):
+        driver = None # setting driver to none initially
         #Getting the File in which student data is stored
         if self.input_file.get():
             input_wb = load_workbook(self.input_file.get())
@@ -255,10 +257,6 @@ class AppResult:
         # Set up the WebDriver (Edge in this example)
         options = Options()
         options.add_experimental_option('excludeSwitches',['enable-logging'])  # Suppress DevTools message
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--no-sandbox")
-        # service = Service(ChromeDriverManager().install())
-        # driver = webdriver.Chrome(service=service ,options=options)
         try:
             driver = webdriver.Chrome(options=options)
         except Exception as e:
@@ -365,7 +363,9 @@ class AppResult:
                 except Exception as e:
                     msg.showerror("Process Interupted","Cache files deleting failed")
             # Close the browser
-            driver.quit()
+            if driver:
+                driver.quit()
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     app = AppResult()
