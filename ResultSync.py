@@ -2,10 +2,12 @@
 # Required Library for the Project
 import webbrowser   #For user feedback
 import threading # Main GUI getting Freeze to remove that problem
+
 #Module for GUI
 from customtkinter import *
 from tkinter import messagebox as msg
 from tkinter import END
+
 #Module for Automating Excel data Read and Write
 from openpyxl import Workbook,load_workbook
 from openpyxl.utils import get_column_letter
@@ -14,14 +16,17 @@ from openpyxl.styles import PatternFill,Font,Alignment
 #Automate the task using selenium"
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
 # from selenium.webdriver.chromium.options import Options
-# from selenium.webdriver.edge.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 
+# to manage paths and Image 
 import os
+import sys
 from PIL import Image,ImageTk
 
 
@@ -29,28 +34,28 @@ class AppResult:
 
     def __init__(self):
         # setting custom self.appearance
-        set_default_color_theme("green")
-        set_appearance_mode('system')
+        set_default_color_theme("dark-blue")
+        set_appearance_mode('dark')
 
         # Creating Window
         self.app = CTk()
         self.app.geometry('1000x600')
         self.app.title("Result Sync")
-        self.app.configure(fg_color = "#F5F7FA")
+        self.app.configure(fg_color = "#0F172A")    
 
         # ICON
         self.file_path = os.path.dirname(os.path.realpath(__file__))        
-        self.folder_icon = CTkImage(Image.open(self.file_path + "/drive_file_icon.png"),size=(33,33))
+        self.folder_icon = CTkImage(Image.open(self.resource_path("icon.png")),size=(33,33))
 
 
         #New Frame
-        Frame1 = CTkFrame(master=self.app,width=310,height=450,fg_color="#E3E9F1",corner_radius=10,border_color='#CBD5E1',border_width=2)
+        Frame1 = CTkFrame(master=self.app,width=310,height=450,fg_color="#111827",corner_radius=10,border_color='#1F2937',border_width=2)
         Frame1.place(relx=0.83,rely=0.55,anchor=CENTER)
         
         # Adding Labels to the self.application
-        self.Label(self.app,"Result Sync",0.5,0.06,font=("Eras Bold ITC",50,"bold"),text_color="#1F2937")     #Heading
-        self.Label(self.app,"━━━━ Automate Result Extraction & Excel Reporting ━━━━",0.5,0.13,text_color="#475569")   #Subheading
-        self.Label(self.app,"©2025 Raju Yadav | Powered by Python made with Love ❤",0.5,0.97,text_color="#64748B")   #Footer
+        self.Label(self.app,"Result Sync",0.5,0.06,font=("Eras Bold ITC",50,"bold"),text_color="#F1F5F9")     #Heading
+        self.Label(self.app,"━━━━ Automate Result Extraction & Excel Reporting ━━━━",0.5,0.13,text_color="#CBD5E1")   #Subheading
+        self.Label(self.app,"©2025 Raju Yadav | Powered by Python made with Love ❤",0.5,0.97,text_color="#94A3B8")   #Footer
 
         self.Label(self.app,"Status",0.4,0.33,("Eras Bold ITC",22,"bold"))
         self.current_student = self.Label(self.app,"Not Started Yet",0.4,0.37,("Roboto",18,"normal"),text_color="#1ACCF8",)
@@ -60,16 +65,17 @@ class AppResult:
 
         self.Label(Frame1,"Select Record File (.xlsx)",0.33,0.2,font=("Roboto",16,"normal")) # input Excel Record File
         self.input_file = self.Entrybox(Frame1,"Input Record File Path",0.42,0.28,230)    # For File Path
-        self.Button(Frame1,"",0.9,0.28,self.SelectRecordFile,font=("Roboto",16,'normal'),width=10,height=10,image=self.folder_icon,fg_color="#E5E7EB",hover_color="#10B981")
+        self.Button(Frame1,"",0.9,0.28,self.SelectRecordFile,font=("Roboto",16,'normal'),width=10,height=10,image=self.folder_icon,fg_color="#1F2937",hover_color="#374151")
 
         self.Label(Frame1,"Location to Save",0.26,0.4,font=("Roboto",16,"normal")) # choose Location and Name for Output File
+
         self.output_file = self.Entrybox(Frame1,"Select Where to Save",0.42,0.48,230) # For Location and Name of the File
-        self.Button(Frame1,"",0.9,0.48,self.selectLocName,font=("Roboto",16,'normal'),width=10,height=10,image=self.folder_icon,fg_color="#E5E7EB",hover_color="#10B981")
+        self.Button(Frame1,"",0.9,0.48,self.selectLocName,font=("Roboto",16,'normal'),width=10,height=10,image=self.folder_icon,fg_color="#1F2937",hover_color="#374151")
         
         self.Button(Frame1,"Proceed",0.5,0.65,self.Proceed,font=("Roboto",18,"bold"))   #For Processing
         # Important Note
-        self.Label(Frame1,"NOTE: FIRST ROW IS TREATED AS HEADERS REGISTRATION\n NO. MUST BE IN COLUMN A & ROLL NO. IN COLUMN B",0.5,0.8,font=("calibri",12,"normal"),text_color='#EF4444')
-        self.Label(Frame1,"NOTE: IF AN ERROR OCCURS, RESELECT THE SAME OUTPUT\n FILE ",0.5,0.9,font=("calibri",12,"normal"),text_color='#EF4444')
+        self.Label(Frame1,"NOTE: FIRST ROW IS TREATED AS \nHEADERS, REGISTRATION NO. MUST BE \nIN COLUMN A & ROLL NO. IN COLUMN B",0.5,0.8,font=("calibri",12,"normal"),text_color='#F87171')
+        self.Label(Frame1,"NOTE: IF AN ERROR OCCURS, RESELECT\n  THE SAME OUTPUTFILE ",0.5,0.93,font=("calibri",12,"normal"),text_color='#F87171')
 
         self.Label(self.app,"Please provide your valueable feedback",0.13,0.85,font=("Roboto",12,"normal"))
         self.feedbacklbl = self.Label(self.app,"Click Here",0.1,0.9,font=("Roboto",12,"normal"))
@@ -78,6 +84,13 @@ class AppResult:
         self.feedbacklbl.bind("<Leave>",lambda event: self.feedbacklbl.configure(font=("Roboto",12,"normal"),cursor="arrow"))
 
         self.app.mainloop()
+
+    def resource_path(self, relative_path):
+        try:
+            base_path = sys._MEIPASS   # used in exe
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
 
     # For User Feedback
     def feedback(self):
@@ -90,14 +103,14 @@ class AppResult:
         return label
     
     # Create Button
-    def Button(self,master,text:str,relx:float,rely:float,command,width=150,height=35,font=("Roboto",16,"normal"),image=None,compound=LEFT,fg_color="#10B981",hover_color="#059669"):
+    def Button(self,master,text:str,relx:float,rely:float,command,width=150,height=35,font=("Roboto",16,"normal"),image=None,compound=LEFT,fg_color="#22C55E",hover_color="#16A34A"):
         button = CTkButton(master=master,width=width,height=height,corner_radius=8,font=font,image=image,compound=compound,text=text,command=command,fg_color=fg_color,hover_color=hover_color)
         button.place(relx=relx,rely=rely,anchor=CENTER)
         return button
     
     # Create Entrybox
-    def Entrybox(self,master,placeholder_text,relx:float,rely:float,width=180,height=35,cor_rad=6,bdr_clr='#CBD5E1',bdr_wid=2,font=("Roboto",14,"normal")):
-        entrybox = CTkEntry(master=master,placeholder_text=placeholder_text,corner_radius=cor_rad,width=width,height=height,border_color=bdr_clr,border_width=bdr_wid,font=font,fg_color="#FFFFFF")
+    def Entrybox(self,master,placeholder_text,relx:float,rely:float,width=180,height=35,cor_rad=6,bdr_clr='#1F2937',bdr_wid=2,font=("Roboto",14,"normal")):
+        entrybox = CTkEntry(master=master,placeholder_text=placeholder_text,corner_radius=cor_rad,width=width,height=height,border_color=bdr_clr,border_width=bdr_wid,font=font,fg_color="#020617",text_color="#E5E7EB")
         entrybox.place(relx=relx,rely=rely,anchor=CENTER)
         return entrybox
     
@@ -105,7 +118,7 @@ class AppResult:
     def TotalRecord(self,):
         if os.path.exists(self.input_file.get()):
             wb = load_workbook(self.input_file.get())
-            ws = wb['Sheet1']
+            ws = wb.active
             row_count = 0
             for rows in ws.iter_rows(min_row=2,max_col=1,values_only=True):
                 if rows:
@@ -189,7 +202,11 @@ class AppResult:
         #Fetching last row
         self.current_row = int(self.row_tracker())
         #one time increament for the progressbar
-        self.one_time_increment = 1/self.TotalRecord()
+        total = self.TotalRecord()
+        if total == 0:
+            msg.showerror("No Data","Excel file has no records")
+            return
+        self.one_time_increment = 1/total
 
         #initializing Excel File Here
         if os.path.exists(self.output_file.get()):
@@ -238,11 +255,23 @@ class AppResult:
         # Set up the WebDriver (Edge in this example)
         options = Options()
         options.add_experimental_option('excludeSwitches',['enable-logging'])  # Suppress DevTools message
-        driver = webdriver.Chrome(options=options)
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox")
+        # service = Service(ChromeDriverManager().install())
+        # driver = webdriver.Chrome(service=service ,options=options)
+        try:
+            driver = webdriver.Chrome(options=options)
+        except Exception as e:
+            msg.showerror("Browser Error",
+            "Chrome not installed or blocked by antivirus.\nInstall Google Chrome.")
+            return
         wait = WebDriverWait(driver,10)
         # Navigate to the result portal
-        driver.get("https://result.mdu.ac.in/postexam/result.aspx")
-
+        try:
+            driver.get("https://result.mdu.ac.in/postexam/result.aspx")
+        except:
+            msg.showerror("Internet Error","Check your internet connection")
+            return
         #Updating Current row
         self.current_row = int(self.row_tracker())
         self.process_data = []
@@ -338,5 +367,5 @@ class AppResult:
             # Close the browser
             driver.quit()
 
-
-app = AppResult()
+if __name__ == "__main__":
+    app = AppResult()
