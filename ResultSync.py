@@ -308,7 +308,7 @@ class AppResult:
                     file.write(reg_no + "\n")
                     self.process_data.append(reg_no) 
                     driver.refresh()
-
+        # saving worked file when error occured
         except Exception as e:
             wb.save(self.output_file.get())
             msg.showerror("Extraction Error", f"Error occurred during data extraction for reg: {rows[0]}.\nPlease start the process again with the same output file.\nDetails: {str(e)}")
