@@ -109,9 +109,9 @@ Clone or download the project files to your local machine.
 
 The generated Excel file includes:
 
-* **Title:** "BCA Result Sem - IV" (merged cells A1:N1)
+* **Title:** "BCA Result" (merged cells A1:N1)
 * **Section Headers:** Student Details, Marks in Each Subjects, Result
-* **Columns:** Sr.No, Name, Father Name, Registration No, Roll No, (empty), BCA206, BCA207, BCA208, BCA209, BCA210, (empty), Total Marks, Result
+* **Columns:** Sr.No, Name, Father Name, Registration No, Roll No, (empty), sub_1, sub_2, sub_3, sub_4, sub_5, (empty), Total Marks, Result
 * Professional formatting with colors and fonts.
 
 ## Important Notes & Legal Disclaimer
