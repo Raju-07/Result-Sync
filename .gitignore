@@ -1,2 +1,16 @@
-Demo.xlsx
-result.xlsx
+# Python Cache
+__pycache__/
+*.pyc
+
+# PyInstaller Build Files
+build/
+dist/
+*.spec
+
+# Application Data / Cache
+Processed_entries.txt
+row_status.txt
+
+# Virtual Environments 
+venv/
+env/
