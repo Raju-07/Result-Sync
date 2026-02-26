@@ -14,3 +14,6 @@ row_status.txt
 # Virtual Environments 
 venv/
 env/
+
+#Window Build
+win_build/
