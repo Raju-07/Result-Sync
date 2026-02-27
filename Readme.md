@@ -16,7 +16,7 @@ Result Sync is a Python-based GUI application designed to automate the extractio
 - **Progress Tracking:** Real-time progress bar and status updates during processing.
 - **Error Handling:** Robust error handling with resume capability and user notifications.
 - **Threading:** Prevents GUI freezing by running the extraction process in a separate thread.
-- **Feedback System:** Includes a link for user feedback.
+- **Feedback System:** Includes a link for user feedback to improve the User Exeprience.
 
 ## Requirements
 
@@ -56,7 +56,6 @@ pip install openpyxl
 pip install selenium
 pip install pillow
 ```
-
 
 ### Step 3: Install Google Chrome
 
