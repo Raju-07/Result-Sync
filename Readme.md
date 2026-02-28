@@ -7,56 +7,13 @@ Result Sync is a Python-based GUI application designed to automate the extractio
 **Author:** Raju Yadav
 **Copyright:** ©2025 Raju Yadav
 **Powered by:** Python, made with Love ❤
+### 📈 Performance Benchmarks
+We rigorously profiled ResultSync to measure the impact of the new Headless implementation and how it performs across different Operating Systems. 
 
-## 🚀 What's New in v1.1.0 (Latest Release)
+* **Headless Mode** reduces RAM usage by over 30% and flattens the scalability curve for large datasets.
+* **Linux vs. Windows:** The script runs noticeably leaner and faster on Linux environments.
 
-Version 1.1.0 brings massive performance upgrades and quality-of-life UI improvements:
-
-* **Headless Mode Integration:** Bypasses the browser UI rendering, resulting in significantly faster extraction times and lower system overhead.
-* **Auto-Open Excel Toggle:** Added a UI switch to automatically launch the completed Excel report upon finishing.
-* **Real-time Progress Tracking:** Improved the progress bar and estimated time calculations.
-
-## 📊 Detailed Performance Comparison (v1.0.0 Standard vs v1.1.0 Headless)
-
-To validate the efficiency of the new architecture, we conducted a rigorous real-world benchmark using a sample size of 60 students. By integrating a tracking function directly into the software, we captured 100% authentic system metrics.
-
-Here is the comprehensive breakdown of the improvements in version v1.1.0.
-
-### 1. Overall System Matrix
-
-<img src="v1.0.0_vs_v1.1.0/04_Overall_Radar.png" width="400" alt="Overall System Scoring Radar Chart">
-
-**Description:** This radar chart presents a holistic, relative score of both versions across four key metrics. A perfect 10 represents the winner in that category.
-* **Analysis:** v1.1.0 forms a dominant triangle at the outer edge, proving it is the superior version. The "Consistency" and "Speed" metrics show the most significant gains, while CPU and Memory efficiency are also notably improved.
-
-***
-
-### 2. Physical Resource Usage Comparison
-
-<img src="v1.0.0_vs_v1.1.0/01_Real_Resource_Usage.png" width="450" alt="Memory, Latency, and CPU Bar Chart">
-
-**Description:** A direct look at the hardware impact and processing speed based on real logged data.
-* **Memory Usage:** By not having to render Chrome's graphical interface, v1.1.0 shaves off significant RAM overhead.
-* **Avg Latency:** The extraction time *per student* is cut significantly, allowing for much faster batch processing.
-* **CPU Load:** Background execution requires less processing power, leaving more resources available for other tasks on your computer.
-
-***
-
-### 3. Scalability (Execution Time Over Data Size)
-
-<img src="v1.0.0_vs_v1.1.0/03_Scalability.png" width="400" alt="Scalability Line Chart">
-
-**Description:** This chart takes the averages from the 60-student test and extrapolates how the total execution time (in minutes) would grow with larger datasets.
-* **Analysis:** While v1.0.0 shows an aggressive, steep curve as data sizes increase, v1.1.0 maintains a significantly flatter trajectory. For large-scale university result processing, v1.1.0 will save hours of wait time.
-
-***
-
-### 4. Processing Consistency (Seconds Per Student)
-
-<img src="v1.0.0_vs_v1.1.0/02_Latency_Distribution.png" width="400" alt="Latency Distribution Boxplot">
-
-**Description:** This boxplot shows the *variance* in extraction speed for individual students. The "box" represents where most extraction times fall.
-* **Analysis:** Version v1.0.0 is very inconsistent, with times spread out and many outliers (the dots representing a single student taking a very long time due to a slow browser render). Version v1.1.0 shows a very tight, compact box and far fewer outliers. This proves that the headless architecture provides a much more stable and predictable processing speed.
+👉 **[Click here to view the full Benchmarks, Hardware Profiling, and Cross-Platform Charts!](BENCHMARKS.md)**
 
 ## Features
 
