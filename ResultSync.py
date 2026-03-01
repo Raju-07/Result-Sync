@@ -1,6 +1,8 @@
 # Standard Library Imports
 import os
 import sys
+import platform
+import subprocess
 import threading
 import webbrowser
 from tkinter import filedialog
@@ -137,7 +139,7 @@ class AppResult:
             self.percentage_label = self.create_label(self.app, "0.00%", 0.6, 0.5)
             self.est_time_label = self.create_label(self.app, f"Estimated Time: {self.estimate_time} Minutes", 0.43, 0.55)
 
-            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.65, command=lambda: threading.Thread(target=self.run_automation, daemon=True).start())
+            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.65, command=lambda: threading.Thread(target=self.run_automation,args=(True,), daemon=True).start())
 
         else:
             self.input_file.configure(border_color="green" if self.input_file.get() else "red")
@@ -173,7 +175,8 @@ class AppResult:
             file.write(str(self.current_row))
         return self.current_row
 
-    def run_automation(self):
+    def run_automation(self,format=False):
+        self.format = format
         if self.input_file.get():
             input_wb = load_workbook(self.input_file.get())
             input_ws = input_wb.active
@@ -202,7 +205,7 @@ class AppResult:
         # Headers Formatting
         ws.merge_cells('A1:N1')
         ws['A1'].fill = PatternFill(start_color="8DFAB1", end_color="8DFAB1", fill_type="solid")
-        ws['A1'] = "BCA Result "
+        ws['A1'] = f"BCA Result"
         ws['A1'].font = Font("Times New Roman", size=16, bold=True, color="006100")
         ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
 
@@ -265,7 +268,6 @@ class AppResult:
                     # Extract Result
                     driver.find_element(By.ID, "txtRegistrationNo").send_keys(reg_no)
                     driver.find_element(By.ID, "txtRollNo").send_keys(str(rows[1]).strip())
-                    
                     wait.until(EC.element_to_be_clickable((By.ID, "cmdbtnProceed"))).click()
                     wait.until(EC.element_to_be_clickable((By.ID, "imgComfirm"))).click()
                     wait.until(EC.element_to_be_clickable((By.ID, "rptMain_ctl01_lnkView"))).click()
@@ -274,8 +276,14 @@ class AppResult:
                     student_name = driver.find_element(By.ID, "lblStudentName").text
                     father_name = driver.find_element(By.ID, "lblFatherName").text
                     self.current_student.configure(text=student_name)
+                    #updating the Excel with Semter and Subject
+                    if self.format:
+                        sem_header = driver.find_element(By.ID,"lblSem").text
+                        sub_name = [driver.find_element(By.XPATH, f"//table[contains(@class, 'table_mdm')]//tr[{i}]//td[1]").text.strip(" :") for i in range(2, 7)]
+                        sub_name1,sub_name2,sub_name3,sub_name4,sub_name5 = sub_name
+                        # print(f"{sub_name1 = } {sub_name2 = } {sub_name3 = } {sub_name4 = } {sub_name5 = }")
 
-                    subject_marks = [driver.find_element(By.XPATH, f"//table//tr[{i}]//td[8]").text for i in range(2, 7)]
+                    subject_marks = [driver.find_element(By.XPATH, f"//table[contains(@class, 'table_mdm')]//tr[{i}]//td[8]").text for i in range(2, 7)]
                     sub_1, sub_2, sub_3, sub_4, sub_5 = subject_marks
                     
                     try:
@@ -284,7 +292,16 @@ class AppResult:
                         total_marks = driver.find_element(By.ID, "rptMarks_ctl07_lblTotal").text
                         
                     result = driver.find_element(By.ID, "lblresult").text
-            
+
+                    #Updating Excel Header and Subject
+                    if self.format:
+                        ws['A1'] = f"BCA Result Sem- {sem_header}"
+                        col_headers = ["Sr.No", "Name", "Father Name", "Registration No", "Roll No", "", f"{sub_name1}", f"{sub_name2}", f"{sub_name3}", f"{sub_name4}", f"{sub_name5}", "", "Total Marks", "Result"]
+                        for cols, header in enumerate(col_headers, start=1):
+                            cols_char = get_column_letter(cols)
+                            ws[f"{cols_char}3"] = header
+                        self.format = False
+
                     data = [self.current_row - 3, student_name, father_name, reg_no, rows[1], "", sub_1, sub_2, sub_3, sub_4, sub_5, "", total_marks, result]
                     
                     for char in range(1, 15):
@@ -307,7 +324,7 @@ class AppResult:
                     # Update processed entries and refresh
                     file.write(reg_no + "\n")
                     self.process_data.append(reg_no) 
-                    driver.refresh()
+                    driver.get("https://result.mdu.ac.in/postexam/result.aspx")
         # saving worked file when error occured while processing
         except Exception as e:
             wb.save(self.output_file.get())
@@ -334,7 +351,18 @@ class AppResult:
             for files in cache_files:
                 if os.path.exists(files):
                     os.remove(files)
-            msg.showinfo("Success", "Cache files have been successfully deleted.")
+            if msg.askyesno("Open File","Would you like to open file ?"):
+                if self.output_file.get():
+                    try:
+                        if platform.system() == "Windows":
+                            os.startfile("open",self.output_file.get())
+                        else:
+                            # for Linux
+                            subprocess.run(["xdg-open",self.output_file.get()])
+                            #for mac
+                            subprocess.run(["open",self.output_file.get()])
+                    except Exception as e:
+                        msg.showerror("Error",f"Unable to open file \n {str(e)}")
 
 if __name__ == "__main__":
     app = AppResult()
