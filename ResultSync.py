@@ -139,7 +139,15 @@ class AppResult:
             self.percentage_label = self.create_label(self.app, "0.00%", 0.6, 0.5)
             self.est_time_label = self.create_label(self.app, f"Estimated Time: {self.estimate_time} Minutes", 0.43, 0.55)
 
-            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.65, command=lambda: threading.Thread(target=self.run_automation,args=(True,), daemon=True).start())
+            self.headless_var = BooleanVar(value=False) 
+            self.headless_switch = CTkSwitch(self.app, text="Headless Mode (Faster)  ", variable=self.headless_var, progress_color="#34D399")
+            self.headless_switch.place(relx=0.40, rely=0.62, anchor=CENTER)
+
+            self.openfile_var = BooleanVar(value=True)
+            self.openfile_switch = CTkSwitch(self.app,text="Open file when completed",variable=self.openfile_var,progress_color="#34D399")
+            self.openfile_switch.place(relx=0.40,rely=0.66,anchor= CENTER)
+            
+            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.75, command=lambda: threading.Thread(target=self.run_automation,args=(True,), daemon=True).start())
 
         else:
             self.input_file.configure(border_color="green" if self.input_file.get() else "red")
@@ -230,6 +238,13 @@ class AppResult:
 
         # Webdriver Setup
         options = Options()
+        if self.headless_var.get():
+            options.add_argument("--headless=new")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--window-size=1920,1080")
+            options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")        
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         try:
             driver = webdriver.Chrome(options=options)
@@ -266,7 +281,8 @@ class AppResult:
                         continue
 
                     # Extract Result
-                    driver.find_element(By.ID, "txtRegistrationNo").send_keys(reg_no)
+                    reg_input = wait.until(EC.presence_of_element_located((By.ID, "txtRegistrationNo")))
+                    reg_input.send_keys(str(reg_no))
                     driver.find_element(By.ID, "txtRollNo").send_keys(str(rows[1]).strip())
                     wait.until(EC.element_to_be_clickable((By.ID, "cmdbtnProceed"))).click()
                     wait.until(EC.element_to_be_clickable((By.ID, "imgComfirm"))).click()
@@ -351,18 +367,28 @@ class AppResult:
             for files in cache_files:
                 if os.path.exists(files):
                     os.remove(files)
+                    
+        if self.output_file.get():
+                try:
+                    if platform.system() == "Windows":
+                        os.startfile(self.output_file.get())
+                    elif platform.system() == "Linux":
+                        subprocess.run(["xdg-open",self.output_file.get()])
+                    else:
+                        subprocess.run(["open",self.output_file.get()])
+                except Exception as e:
+                    msg.showerror("Error",f"Unable to open file \n {str(e)}")
+        else:
             if msg.askyesno("Open File","Would you like to open file ?"):
-                if self.output_file.get():
-                    try:
-                        if platform.system() == "Windows":
-                            os.startfile("open",self.output_file.get())
-                        else:
-                            # for Linux
-                            subprocess.run(["xdg-open",self.output_file.get()])
-                            #for mac
-                            subprocess.run(["open",self.output_file.get()])
-                    except Exception as e:
-                        msg.showerror("Error",f"Unable to open file \n {str(e)}")
+                try:
+                    if platform.system() == "Windows":
+                        os.startfile(self.output_file.get())
+                    elif platform.system() == "Linux":
+                        subprocess.run(["xdg-open",self.output_file.get()])
+                    else:
+                        subprocess.run(["open",self.output_file.get()])
+                except Exception as e:
+                    msg.showerror("Error",f"Unable to open file \n {str(e)}")
 
 if __name__ == "__main__":
     app = AppResult()
