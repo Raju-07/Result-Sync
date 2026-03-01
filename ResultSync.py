@@ -251,7 +251,6 @@ class AppResult:
         except Exception:
             msg.showerror("Browser Error", "Chrome not installed or blocked. Install Google Chrome.")
             return
-
         wait = WebDriverWait(driver, 10)
         
         try:
@@ -292,12 +291,12 @@ class AppResult:
                     student_name = driver.find_element(By.ID, "lblStudentName").text
                     father_name = driver.find_element(By.ID, "lblFatherName").text
                     self.current_student.configure(text=student_name)
+                  
                     #updating the Excel with Semter and Subject
                     if self.format:
                         sem_header = driver.find_element(By.ID,"lblSem").text
                         sub_name = [driver.find_element(By.XPATH, f"//table[contains(@class, 'table_mdm')]//tr[{i}]//td[1]").text.strip(" :") for i in range(2, 7)]
                         sub_name1,sub_name2,sub_name3,sub_name4,sub_name5 = sub_name
-                        # print(f"{sub_name1 = } {sub_name2 = } {sub_name3 = } {sub_name4 = } {sub_name5 = }")
 
                     subject_marks = [driver.find_element(By.XPATH, f"//table[contains(@class, 'table_mdm')]//tr[{i}]//td[8]").text for i in range(2, 7)]
                     sub_1, sub_2, sub_3, sub_4, sub_5 = subject_marks
@@ -341,6 +340,7 @@ class AppResult:
                     file.write(reg_no + "\n")
                     self.process_data.append(reg_no) 
                     driver.get("https://result.mdu.ac.in/postexam/result.aspx")
+        
         # saving worked file when error occured while processing
         except Exception as e:
             wb.save(self.output_file.get())
