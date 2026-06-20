@@ -2,7 +2,7 @@
 
 ## Overview
 
-Result Sync is a Python-based GUI application designed to automate the extraction of BCA (Bachelor of Computer Applications) examination results from the Maharshi Dayananda University (MDU) result portal. The application uses web scraping techniques to fetch individual student results and compiles them into a formatted Excel report. This tool is particularly useful for educators, administrators, or students who need to process multiple result records efficiently.
+Result Sync is a Python-based GUI application designed to automate the extraction of BCA examination results from the MDU result portal. The application uses web scraping techniques to fetch individual student results and compiles them into a formatted Excel report. This tool is particularly useful for educators, administrators, or students who need to process multiple result records efficiently.
 
 **Author:** Raju Yadav
 **Copyright:** ©2025 Raju Yadav
