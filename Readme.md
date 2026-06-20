@@ -7,13 +7,15 @@ Result Sync is a Python-based GUI application designed to automate the extractio
 **Author:** Raju Yadav
 **Copyright:** ©2025 Raju Yadav
 **Powered by:** Python, made with Love ❤
-### 📈 Performance Benchmarks
-We rigorously profiled ResultSync to measure the impact of the new Headless implementation and how it performs across different Operating Systems. 
+
+### Performance Benchmarks
+
+We rigorously profiled ResultSync to measure the impact of the new Headless implementation and how it performs across different Operating Systems.
 
 * **Headless Mode** reduces RAM usage by over 30% and flattens the scalability curve for large datasets.
 * **Linux vs. Windows:** The script runs noticeably leaner and faster on Linux environments.
 
-👉 **[Click here to view the full Benchmarks, Hardware Profiling, and Cross-Platform Charts!](BENCHMARKS.md)**
+ **[Click here to view the full Benchmarks, Hardware Profiling, and Cross-Platform Charts!](BENCHMARKS.md)**
 
 ## Features
 
@@ -125,7 +127,7 @@ The generated Excel file includes:
 * **Error Handling:** If an error occurs during processing, the app will save progress and display an error message. You may need to reselect the output file and restart.
 * **Resume Capability:** The app tracks processed entries and can resume from where it left off if interrupted.
 * **Browser Compatibility:** Currently configured for Google Chrome.
-* **⚠️ Legal Notice:** This is an independent tool strictly for educational and personal utility. It is not affiliated with MDU. Ensure compliance with MDU's terms of service. Do not use this tool to overload the servers (DDoS) or extract data without proper authorization. Use at your own risk.
+*  **Legal Notice:** This is an independent tool strictly for educational and personal utility. It is not affiliated with MDU. Ensure compliance with MDU's terms of service. Do not use this tool to overload the servers (DDoS) or extract data without proper authorization. Use at your own risk.
 
 ## Troubleshooting
 

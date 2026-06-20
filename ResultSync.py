@@ -8,6 +8,7 @@ import webbrowser
 from tkinter import filedialog
 from tkinter import messagebox as msg
 from tkinter import END
+from datetime import date
 
 # GUI Imports
 from customtkinter import *
@@ -45,11 +46,16 @@ class AppResult:
         # Main Interface Frame
         self.frame1 = CTkFrame(master=self.app, width=310, height=450, fg_color="#111827", corner_radius=10, border_color='#1F2937', border_width=2)
         self.frame1.place(relx=0.83, rely=0.55, anchor=CENTER)
+
+        #2nd frame for course selection
+        self.frame2 = CTkFrame(master=self.app, width=200, height=330, fg_color="#111827", corner_radius=10, border_color='#1F2937', border_width=2)
+        self.frame2.place(relx=0.12, rely=0.45, anchor=CENTER)
+        
         
         # Adding Labels to the application
         self.create_label(self.app, "Result Sync", 0.5, 0.06, font=("Eras Bold ITC", 50, "bold"), text_color="#F1F5F9")
         self.create_label(self.app, "━━━━ Automate Result Extraction & Excel Reporting ━━━━", 0.5, 0.13, text_color="#CBD5E1")
-        self.create_label(self.app, "©2025 Raju Yadav | Powered by Python, made with Love ❤", 0.5, 0.97, text_color="#94A3B8")
+        self.create_label(self.app, f"©{date.today().strftime("%Y")} Raju Yadav | Powered by Python, made with Love ❤", 0.5, 0.97, text_color="#94A3B8")
 
         self.create_label(self.app, "Status", 0.4, 0.33, ("Eras Bold ITC", 22, "bold"))
         self.current_student = self.create_label(self.app, "Not Started Yet", 0.4, 0.37, ("Roboto", 18, "normal"), text_color="#1ACCF8")
@@ -67,8 +73,20 @@ class AppResult:
         
         self.create_button(self.frame1, "Proceed", 0.5, 0.65, self.proceed, font=("Roboto", 18, "bold"))
         
+        # Frame2 Components
+        self.create_label(master=self.frame2,text="Structure",x=0.5,y=0.1,font=("timesnewroman",18,"normal"))
+
+        #checking and initializing radiobutton value
+        self.radio_var = StringVar(value="bca_new")
+        
+        #options
+        self.bca_new = CTkRadioButton(master=self.frame2,width=40,height=40,text="BCA NEW",value="bca_new",variable=self.radio_var,fg_color="lightgreen")
+        self.bca_new.place(relx=0.1,rely=0.2)
+        self.bca_old = CTkRadioButton(master=self.frame2,width=40,height=40,text="BCA OLD",value="bca_old",variable=self.radio_var)
+        self.bca_old.place(relx=0.1,rely=0.3)
+
         # Important Notes
-        self.create_label(self.frame1, "NOTE: FIRST ROW IS TREATED AS \nHEADERS. REGISTRATION NO. MUST BE \nIN COLUMN A & ROLL NO. IN COLUMN B", 0.5, 0.8, font=("calibri", 12, "normal"), text_color='#F87171')
+        self.create_label(self.frame1, "NOTE: FIRST ROW IS TREATED AS \nHEADERS. REGISTRATION NO. MUST BE \nIN 'COLUMN A' & ROLL NO. IN 'COLUMN B'", 0.5, 0.8, font=("calibri", 12, "normal"), text_color='#F87171')
         self.create_label(self.frame1, "NOTE: IF AN ERROR OCCURS, RESELECT\nTHE SAME OUTPUT FILE", 0.5, 0.93, font=("calibri", 12, "normal"), text_color='#F87171')
 
         self.create_label(self.app, "Please provide your valuable feedback", 0.13, 0.85, font=("Roboto", 12, "normal"))
