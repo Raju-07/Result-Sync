@@ -10,6 +10,7 @@ dist/
 # Application Data / Cache
 Processed_entries.txt
 row_status.txt
+rough.py
 
 # Virtual Environments 
 venv/
