@@ -19,3 +19,7 @@ env/
 #Window Build
 win_build_v1.0.0/
 win_build_v1.1.0/
+
+# Demo xlsx Files
+Demo.xlsx
+result.xlsx

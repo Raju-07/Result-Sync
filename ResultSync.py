@@ -139,11 +139,12 @@ class AppResult:
         else:
             msg.showerror("File Not Exists", "Please provide the correct path and location.")
             return 0
-
+        
+    # function to start the Extraction process
     def proceed(self):
         if self.input_file.get() and self.output_file.get():
-            self.input_file.configure(border_color='green')
-            self.output_file.configure(border_color="green")
+            self.input_file.configure(border_color='green')  # changed color to green -> file accepted
+            self.output_file.configure(border_color="green") # changed color to green -> file accepted
 
             self.estimate_time = self.get_total_records()
             if self.estimate_time == 0:
