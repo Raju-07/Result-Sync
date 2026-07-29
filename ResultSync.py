@@ -279,12 +279,12 @@ class AppResult:
             driver.quit()
             return
 
-        self.process_data = []
+        self.process_data = set()
         file_name = "Processed_entries.txt"
         if os.path.exists(file_name):
             try:
                 with open(file_name, "r") as file:
-                    self.process_data = list(map(str.strip, file.readlines()))
+                    self.process_data = set(map(str.strip, file.readlines()))
             except Exception:
                 msg.showerror("Error", "Error reading Processed Entries.")
 
@@ -357,7 +357,7 @@ class AppResult:
 
                     # Update processed entries and refresh
                     file.write(reg_no + "\n")
-                    self.process_data.append(reg_no) 
+                    self.process_data.add(reg_no) 
                     driver.get("https://result.mdu.ac.in/postexam/result.aspx")
         
         # saving worked file when error occured while processing
