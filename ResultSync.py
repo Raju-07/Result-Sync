@@ -128,15 +128,14 @@ class AppResult:
     
     # geting total record count
     def get_total_records(self):
-        if os.path.exists(self.input_file.get()):
-            wb = load_workbook(self.input_file.get())
+        try:
+            wb = load_workbook(self.input_file.get(),read_only=True)
             ws = wb.active
-            row_count = 0
+            total_row = 0
             for rows in ws.iter_rows(min_row=2, max_col=1, values_only=True):
-                if rows and rows[0] is not None:
-                    row_count += 1
-            return row_count
-        else:
+                if rows and rows[0] is not None: total_row += 1
+            return total_row
+        except FileNotFoundError:
             msg.showerror("File Not Exists", "Please provide the correct path and location.")
             return 0
         
@@ -157,16 +156,20 @@ class AppResult:
             
             self.percentage_label = self.create_label(self.app, "0.00%", 0.6, 0.5)
             self.est_time_label = self.create_label(self.app, f"Estimated Time: {self.total_record*5} seconds", 0.43, 0.55)# 5secs as estimate time for one record
-
+            # headless mode
             self.headless_var = BooleanVar(value=False) 
             self.headless_switch = CTkSwitch(self.app, text="Headless Mode (Faster)  ", variable=self.headless_var, progress_color="#34D399")
             self.headless_switch.place(relx=0.40, rely=0.62, anchor=CENTER)
-
+            #open when done
             self.openfile_var = BooleanVar(value=True)
             self.openfile_switch = CTkSwitch(self.app,text="Open file when completed",variable=self.openfile_var,progress_color="#34D399")
             self.openfile_switch.place(relx=0.40,rely=0.66,anchor= CENTER)
+            # cleanup
+            self.cleanup_var = BooleanVar(value=True)
+            self.cleanup_switch = CTkSwitch(self.app,text="Clean Cache                          ",variable=self.openfile_var,progress_color="#34D399")
+            self.cleanup_switch.place(relx=0.40,rely=0.7,anchor= CENTER)
             
-            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.75, command=lambda: threading.Thread(target=self.run_automation,args=(True,), daemon=True).start())
+            self.start_btn = self.create_button(self.app, "Start", 0.41, 0.76, command=lambda: threading.Thread(target=self.run_automation,args=(True,), daemon=True).start())
 
         else:
             self.input_file.configure(border_color="green" if self.input_file.get() else "red")
@@ -396,22 +399,22 @@ class AppResult:
         driver.quit()
         msg.showinfo("Success", "All data fetched successfully.")
         
-        if msg.askyesno("Clear Cache", "Process completed successfully. Clear cache files?"):
+        if self.cleanup_var:
             cache_files = ['Processed_entries.txt', 'row_status.txt']
             for files in cache_files:
                 if os.path.exists(files):
                     os.remove(files)
                     
         if self.output_file.get():
-                try:
-                    if platform.system() == "Windows":
-                        os.startfile(self.output_file.get())
-                    elif platform.system() == "Linux":
-                        subprocess.run(["xdg-open",self.output_file.get()])
-                    else:
-                        subprocess.run(["open",self.output_file.get()])
-                except Exception as e:
-                    msg.showerror("Error",f"Unable to open file \n {str(e)}")
+            try:
+                if platform.system() == "Windows":
+                    os.startfile(self.output_file.get())
+                elif platform.system() == "Linux":
+                    subprocess.run(["xdg-open",self.output_file.get()])
+                else:
+                    subprocess.run(["open",self.output_file.get()])
+            except Exception as e:
+                msg.showerror("Error",f"Unable to open file \n {str(e)}")
         else:
             if msg.askyesno("Open File","Would you like to open file ?"):
                 try:
