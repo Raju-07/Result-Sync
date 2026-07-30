@@ -8,7 +8,7 @@ import webbrowser
 from tkinter import filedialog
 from tkinter import messagebox as msg
 from tkinter import END
-from datetime import date
+from datetime import date,datetime
 
 # GUI Imports
 from customtkinter import *
@@ -146,8 +146,8 @@ class AppResult:
             self.input_file.configure(border_color='green')  # changed color to green -> file accepted
             self.output_file.configure(border_color="green") # changed color to green -> file accepted
 
-            self.estimate_time = self.get_total_records()
-            if self.estimate_time == 0:
+            self.total_record = self.get_total_records()
+            if self.total_record == 0:
                 return
 
             self.progress_status = 0.0
@@ -156,7 +156,7 @@ class AppResult:
             self.progressbar.set(self.progress_status) 
             
             self.percentage_label = self.create_label(self.app, "0.00%", 0.6, 0.5)
-            self.est_time_label = self.create_label(self.app, f"Estimated Time: {self.estimate_time} Minutes", 0.43, 0.55)
+            self.est_time_label = self.create_label(self.app, f"Estimated Time: {self.total_record*5} seconds", 0.43, 0.55)# 5secs as estimate time for one record
 
             self.headless_var = BooleanVar(value=False) 
             self.headless_switch = CTkSwitch(self.app, text="Headless Mode (Faster)  ", variable=self.headless_var, progress_color="#34D399")
@@ -293,6 +293,8 @@ class AppResult:
                 for rows in input_ws.iter_rows(min_row=2, max_col=2, values_only=True):
                     if rows[0] is None:
                         break
+
+                    self.starting_time = int(datetime.now().strftime('%S'))
                     
                     reg_no = str(rows[0]).strip()
                     if reg_no in self.process_data:
@@ -330,13 +332,13 @@ class AppResult:
                     #Updating Excel Header and Subject
                     if self.format:
                         ws['A1'] = f"BCA Result Sem- {sem_header}"
-                        col_headers = ["Sr.No", "Name", "Father Name", "Registration No", "Roll No", "", f"{sub_name1}", f"{sub_name2}", f"{sub_name3}", f"{sub_name4}", f"{sub_name5}", "", "Total Marks", "Result"]
+                        col_headers = ("Sr.No", "Name", "Father Name", "Registration No", "Roll No", "", f"{sub_name1}", f"{sub_name2}", f"{sub_name3}", f"{sub_name4}", f"{sub_name5}", "", "Total Marks", "Result")
                         for cols, header in enumerate(col_headers, start=1):
                             cols_char = get_column_letter(cols)
                             ws[f"{cols_char}3"] = header
                         self.format = False
 
-                    data = [self.current_row - 3, student_name, father_name, reg_no, rows[1], "", sub_1, sub_2, sub_3, sub_4, sub_5, "", total_marks, result]
+                    data = (self.current_row - 3, student_name, father_name, reg_no, rows[1], "", sub_1, sub_2, sub_3, sub_4, sub_5, "", total_marks, result)
                     
                     for char in range(1, 15):
                         char_num = get_column_letter(char)
@@ -347,19 +349,32 @@ class AppResult:
                         file2.write(str(self.current_row + 1))
                         
                     self.current_row += 1
+                    self.end_time = int(datetime.now().strftime('%S'))
+
+                    # calculate time
+                    def calculate_time(start_time: int = self.starting_time, end_time: int = self.end_time) -> int:
+                        if end_time >= start_time:
+                            # normal case: no wrap-around
+                            return (end_time - start_time) * self.total_record
+                        
+                        # edge case: wrap-around when end_time < start_time
+                        return ((60 - start_time) + end_time) * self.total_record
 
                     # Update GUI
                     self.progress_status += self.one_time_increment
                     self.progressbar.set(self.progress_status)
                     self.percentage_label.configure(text=f"{(self.progress_status)*100:.2f}%")
-                    self.est_time_label.configure(text=f"Estimated Time: {max(0, self.estimate_time//4)} Minutes")
-                    self.estimate_time -= 1
+                    self.est_time_label.configure(text=f"Estimated Time: {max(0,calculate_time())} seconds")
+                    self.total_record -= 1
 
                     # Update processed entries and refresh
                     file.write(reg_no + "\n")
                     self.process_data.add(reg_no) 
-                    driver.get("https://result.mdu.ac.in/postexam/result.aspx")
-        
+                    driver.refresh()
+                else:
+                #saving the file if loops break
+                    wb.save(self.output_file.get())
+
         # saving worked file when error occured while processing
         except Exception as e:
             wb.save(self.output_file.get())
